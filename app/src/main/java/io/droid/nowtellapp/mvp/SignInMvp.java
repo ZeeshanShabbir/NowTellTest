@@ -28,5 +28,7 @@ public interface SignInMvp {
         void handleSignUp();
 
         void handleNoInternet();
+
+        void handleOnPause();
     }
 }

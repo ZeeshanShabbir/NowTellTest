@@ -27,5 +27,7 @@ public interface SignUpStepTwoMvp {
                           String countryBl, String cityBI, String countyBl, String postalCodeBl);
 
         void handleNoInternet();
+
+        void handleDetach();
     }
 }

@@ -21,7 +21,8 @@ public class SplashActivity extends AppCompatActivity {
         NowTellApp.get(this).getComponent().inject(this);
 
         if (sharedPreferences.getString(Constants.SESSION_TOKEN, null) != null) {
-
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
         } else {
             startActivity(new Intent(this, MainActivity.class));
             finish();

@@ -13,6 +13,7 @@ import io.droid.nowtellapp.util.Constants;
 import io.droid.nowtellapp.util.Utils;
 import io.droid.nowtellapp.webservices.NowTellApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -27,6 +28,8 @@ public class SignInPresenter implements SignInMvp.Presenter {
 
     private final SignInMvp.View view;
     private final NowTellApi nowTellApi;
+
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public SignInPresenter(SharedPreferences sharedPreferences, SignInMvp.View view, NowTellApi nowTellApi) {
         this.sharedPreferences = sharedPreferences;
@@ -54,7 +57,7 @@ public class SignInPresenter implements SignInMvp.Presenter {
         header.put("Authorization", Utils.getAuthorizationToken().replace("\n", ""));
         header.put("Content-Type", "Application/json; charset=utf-8");
 
-        nowTellApi.loginUser(body, header)
+        compositeDisposable.add(nowTellApi.loginUser(body, header)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<WSResponseDTO<WSAuthDTO>>() {
@@ -83,7 +86,7 @@ public class SignInPresenter implements SignInMvp.Presenter {
                         view.showToast(throwable.getLocalizedMessage());
                         view.hideProgress();
                     }
-                });
+                }));
     }
 
     @Override
@@ -94,5 +97,11 @@ public class SignInPresenter implements SignInMvp.Presenter {
     @Override
     public void handleNoInternet() {
         view.showError(R.string.no_internet_connection);
+    }
+
+    @Override
+    public void handleOnPause() {
+        if (compositeDisposable.size() > 0)
+            compositeDisposable.dispose();
     }
 }

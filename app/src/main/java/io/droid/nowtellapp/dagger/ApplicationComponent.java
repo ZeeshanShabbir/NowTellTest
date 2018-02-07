@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import io.droid.nowtellapp.mvp.SignUpStepTwoMvp;
+import io.droid.nowtellapp.ui.activities.HomeActivity;
 import io.droid.nowtellapp.ui.activities.MainActivity;
 import io.droid.nowtellapp.ui.activities.SplashActivity;
 
@@ -21,4 +22,6 @@ public interface ApplicationComponent {
     SignUpStepOneComponent signUpStepOneMvpComponet(SignUpStepOneMvpModule signUpStepOneMvpModule);
 
     SignUpStepTwoComponent signUpStepTwoMvpComponet(SignUpStepTwoMvpModule signUpStepTwoMvpModule);
+
+    void inject(HomeActivity homeActivity);
 }

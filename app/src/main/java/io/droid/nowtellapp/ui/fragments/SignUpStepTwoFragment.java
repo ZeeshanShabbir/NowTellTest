@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -94,8 +95,52 @@ public class SignUpStepTwoFragment extends Fragment implements SignUpStepTwoMvp.
         validator = new Validator(this);
         validator.setValidationListener(this);
         binding.btnNext.setOnClickListener(this);
+        initCheckboxListeners();
         bindViews();
         return binding.getRoot();
+    }
+
+    private void initCheckboxListeners() {
+        binding.checkboxBilling.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    binding.etAddressLineOneBl.setText(binding.etAddressLineOne.getText().toString());
+                    binding.etAddressLineTwoBl.setText(binding.etAddressLineTwo.getText().toString());
+                    binding.etCityBl.setText(binding.etCity.getText().toString());
+                    binding.etCountyBl.setText(binding.etCounty.getText().toString());
+                    binding.etCountryBl.setText(binding.etCountry.getText().toString());
+                    binding.etPostalCodeBl.setText(binding.etPostalCode.getText().toString());
+                } else {
+                    binding.etAddressLineOneBl.setText("");
+                    binding.etAddressLineTwoBl.setText("");
+                    binding.etCityBl.setText("");
+                    binding.etCountyBl.setText("");
+                    binding.etCountyBl.setText("");
+                    binding.etPostalCodeBl.setText("");
+                }
+            }
+        });
+        binding.checkboxShipping.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    binding.etAddressLineOneSp.setText(binding.etAddressLineOne.getText().toString());
+                    binding.etAddressLineTwoSp.setText(binding.etAddressLineTwo.getText().toString());
+                    binding.etCitySp.setText(binding.etCity.getText().toString());
+                    binding.etCountySp.setText(binding.etCounty.getText().toString());
+                    binding.etCountrySp.setText(binding.etCountry.getText().toString());
+                    binding.etPostalCodeSp.setText(binding.etPostalCode.getText().toString());
+                } else {
+                    binding.etAddressLineOneSp.setText("");
+                    binding.etAddressLineTwoSp.setText("");
+                    binding.etCitySp.setText("");
+                    binding.etCountySp.setText("");
+                    binding.etCountySp.setText("");
+                    binding.etPostalCodeSp.setText("");
+                }
+            }
+        });
     }
 
     private void bindViews() {
@@ -132,6 +177,7 @@ public class SignUpStepTwoFragment extends Fragment implements SignUpStepTwoMvp.
     @Override
     public void onDetach() {
         super.onDetach();
+        presenter.handleDetach();
         mListener = null;
     }
 
@@ -154,6 +200,10 @@ public class SignUpStepTwoFragment extends Fragment implements SignUpStepTwoMvp.
 
     @Override
     public void onValidationFailed(List<ValidationError> errors) {
+        if (binding.checkboxShipping.isChecked())
+            binding.checkboxShipping.setChecked(false);
+        if (binding.checkboxBilling.isChecked())
+            binding.checkboxBilling.setChecked(false);
         for (ValidationError error : errors) {
             View view = error.getView();
             String message = error.getCollatedErrorMessage(getActivity());
@@ -205,4 +255,5 @@ public class SignUpStepTwoFragment extends Fragment implements SignUpStepTwoMvp.
     public interface OnFragmentInteractionListener {
         void onFragmentShowLogin();
     }
+
 }

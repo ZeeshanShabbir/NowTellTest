@@ -1,5 +1,6 @@
 package io.droid.nowtellapp.ui.fragments;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,7 +32,7 @@ import io.droid.nowtellapp.databinding.FragmentSignUpFragmentStepOneBinding;
 import io.droid.nowtellapp.mvp.SignUpStepOneMvp;
 
 public class SignUpStepOneFragment extends Fragment implements SignUpStepOneMvp.View,
-        Validator.ValidationListener, View.OnClickListener {
+        Validator.ValidationListener, View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     FragmentSignUpFragmentStepOneBinding binding;
 
@@ -84,6 +87,7 @@ public class SignUpStepOneFragment extends Fragment implements SignUpStepOneMvp.
         validator = new Validator(this);
         validator.setValidationListener(this);
         binding.btnNext.setOnClickListener(this);
+        binding.etDob.setOnClickListener(this);
         bindViews();
         return binding.getRoot();
     }
@@ -156,7 +160,19 @@ public class SignUpStepOneFragment extends Fragment implements SignUpStepOneMvp.
             case R.id.btn_next:
                 validator.validate();
                 break;
+            case R.id.et_dob:
+                Calendar now = Calendar.getInstance();
+                DatePickerDialog dpd = new DatePickerDialog(getActivity(), this, now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH), now.get(Calendar.DATE));
+                dpd.show();
+                break;
         }
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        String date = i + "-" + (++i1) + "-" + i2;
+        dob.setText(date);
     }
 
     public interface OnNextFragmentListener {

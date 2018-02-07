@@ -77,6 +77,7 @@ public class SignInFragment extends Fragment implements SignInMvp.View, View.OnC
     @Override
     public void onDetach() {
         super.onDetach();
+        presenter.handleOnPause();
         mListener = null;
     }
 

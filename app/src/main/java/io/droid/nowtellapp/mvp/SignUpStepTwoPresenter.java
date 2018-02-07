@@ -11,6 +11,7 @@ import io.droid.nowtellapp.model.WSSignUpDTO;
 import io.droid.nowtellapp.util.Utils;
 import io.droid.nowtellapp.webservices.NowTellApi;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -22,6 +23,8 @@ public class SignUpStepTwoPresenter implements SignUpStepTwoMvp.Presenter {
 
     private final SignUpStepTwoMvp.View view;
     private final NowTellApi api;
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public SignUpStepTwoPresenter(SignUpStepTwoMvp.View view, NowTellApi api) {
         this.view = view;
@@ -71,7 +74,7 @@ public class SignUpStepTwoPresenter implements SignUpStepTwoMvp.Presenter {
         header.put("Content-Type", "Application/json; charset=utf-8");
 
 
-        api.signupUser(UserSignUpData.getInstance().getParam(), header)
+        compositeDisposable.add(api.signupUser(UserSignUpData.getInstance().getParam(), header)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<WSResponseDTO<WSSignUpDTO>>() {
@@ -79,9 +82,12 @@ public class SignUpStepTwoPresenter implements SignUpStepTwoMvp.Presenter {
                     public void accept(WSResponseDTO<WSSignUpDTO> wsSignUpDTOWSResponseDTO) throws Exception {
                         view.hideProgress();
                         if (wsSignUpDTOWSResponseDTO.getPayload() != null
-                                && wsSignUpDTOWSResponseDTO.getPayload().getSignup() != null &&
-                                wsSignUpDTOWSResponseDTO.getPayload().getSignup().isRegistered()) {
-                            view.showLoginScreen();
+                                && wsSignUpDTOWSResponseDTO.getPayload().getSignup() != null) {
+                            if (wsSignUpDTOWSResponseDTO.getPayload().getSignup().isRegistered()) {
+                                view.showLoginScreen();
+                            } else {
+                                view.showToast(wsSignUpDTOWSResponseDTO.getMessage());
+                            }
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -89,12 +95,18 @@ public class SignUpStepTwoPresenter implements SignUpStepTwoMvp.Presenter {
                     public void accept(Throwable throwable) throws Exception {
                         view.hideProgress();
                     }
-                });
+                }));
 
     }
 
     @Override
     public void handleNoInternet() {
         view.showError(R.string.no_internet_connection);
+    }
+
+    @Override
+    public void handleDetach() {
+        if (compositeDisposable.size() > 0)
+            compositeDisposable.dispose();
     }
 }
