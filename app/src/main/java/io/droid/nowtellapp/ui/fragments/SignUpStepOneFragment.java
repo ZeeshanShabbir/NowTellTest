@@ -20,8 +20,10 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -170,9 +172,11 @@ public class SignUpStepOneFragment extends Fragment implements SignUpStepOneMvp.
     }
 
     @Override
-    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-        String date = i + "-" + (++i1) + "-" + i2;
-        dob.setText(date);
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i12) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        Calendar newDate = Calendar.getInstance();
+        newDate.set(i, i1, i12);
+        dob.setText(dateFormatter.format(newDate.getTime()));
     }
 
     public interface OnNextFragmentListener {
