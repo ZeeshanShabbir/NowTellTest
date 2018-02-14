@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        NowTellApp.get(this).getComponent().inject(this);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, SignInFragment.newInstance())
                 .commit();
@@ -25,10 +24,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSignUpClickListener() {
-        fragmentTransection(SignUpStepOneFragment.newInstance(), "signupstepone");
+        fragmentTransaction(SignUpStepOneFragment.newInstance(), "signupstepone");
     }
 
-    private void fragmentTransection(Fragment fragment, String tag) {
+    private void fragmentTransaction(Fragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .addToBackStack(tag)
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNextFragment() {
-        fragmentTransection(SignUpStepTwoFragment.newInstance(), "signupsteptwo");
+        fragmentTransaction(SignUpStepTwoFragment.newInstance(), "signupsteptwo");
     }
 
     @Override
@@ -45,6 +44,6 @@ public class MainActivity extends AppCompatActivity implements
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
-        fragmentTransection(SignInFragment.newInstance(), "signin");
+        fragmentTransaction(SignInFragment.newInstance(), "signin");
     }
 }
